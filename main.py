@@ -3,7 +3,7 @@
 
 from google.appengine.ext import vendor
 vendor.add('libs')
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
 app = Flask(__name__)
 
 import json
@@ -190,6 +190,30 @@ def from_tonda():
     next_bus = get_next_bus(time_table, "tonda", "kutc", current_time[0], current_time[1], current_time[2], current_time[3], current_time[4])
 
     return render_template("from-tonda.html", year = next_bus[0], month = next_bus[1], day = next_bus[2], hour = next_bus[3], minute = next_bus[4][0], dest = next_bus[4][1], stat = next_bus[4][2])
+
+
+@app.route('/api/v1/next-bus/<string:word>', methods=['GET'])
+def api_get_next_bus(word):
+    origin = ''
+    destination = ''
+    if word == 'to-takatsuki':
+        origin = 'kutc'
+        destination = 'takatsuki'
+    elif word == 'to-tonda':
+        origin = 'kutc'
+        destination = 'tonda'
+    elif word == 'from-takatsuki':
+        origin = 'takatsuki'
+        destination = 'kutc'
+    elif word == 'from-tonda':
+        origin = 'tonda'
+        destination = 'kutc'
+    else:
+        return jsonify({'Error': 'Mismatch your request path'}), 400
+    current_time = get_current_time()
+    next_bus = get_next_bus(time_table, origin, destination, current_time[0], current_time[1], current_time[2], current_time[3], current_time[4])
+
+    return jsonify({'Year': next_bus[0], 'Month': next_bus[1], 'Day': next_bus[2], 'Hour': next_bus[3], 'Minute': next_bus[4][0], 'Destination': next_bus[4][1], 'Stat': next_bus[4][2]})
 
 
 @app.route('/robots.txt')
