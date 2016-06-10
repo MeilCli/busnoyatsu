@@ -8,7 +8,7 @@ wip
 - [ ] 結果の複数表示
 - [ ] バスが来るまでの残り時間の表示
 - [ ] バス種別表示（荻谷行き，富田経由高槻行き等）
-- [ ] **Slackとの連携**
+- [x] [Slackとの連携](https://github.com/kobasemi/kobabot/blob/master/scripts/nextbus.coffee)
 - [ ] レスポンシブ対応
 - [ ] 無茶苦茶なHTMLとCSSをどうにかする
 - [ ] Android版，iOS版開発（？）
