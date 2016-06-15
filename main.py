@@ -62,7 +62,7 @@ def get_next_bus(time_table, from_, to, year, month, day, hour, minute):
     while True:
         if hour_tt is not None:
             for bus in hour_tt:
-                if bus[0] >= minute:
+                if bus[0] > minute:
                     bus_type = bus[2]
                     if not in_vacation and bus_type == 2:
                         # 通常日かつ学休日のみ運行バスのとき
@@ -117,7 +117,7 @@ def get_multiple_time_info_for_next_bus(time_table, from_, to, year, month, day,
     while True:
         if hour_tt is not None:
             for bus in hour_tt:
-                if bus[0] >= minute:
+                if bus[0] > minute:
                     bus_type = bus[2]
                     if not in_vacation and bus_type == 2:
                         # 通常日かつ学休日のみ運行バスのとき
