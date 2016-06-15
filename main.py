@@ -96,6 +96,63 @@ def get_next_bus(time_table, from_, to, year, month, day, hour, minute):
         hour_tt = get_element(day_tt, str(hour))
 
 
+def get_multiple_time_info_for_next_bus(time_table, from_, to, year, month, day, hour, minute, counts=1):
+    re_list = []
+    from_tt = get_element(time_table, from_)
+    to_tt = get_element(from_tt, to)
+
+    # 日付のタイプ(week, sat, sun)を取得
+    daytype = get_day_type(year, month, day)
+
+    # 学休期間かどうか調べる
+    in_vacation = date_is_in_vacation(year, month, day)
+
+    if daytype == "":
+        return None
+
+    day_tt = get_element(to_tt, daytype)
+    hour_tt = get_element(day_tt, str(hour))
+
+    # 次のバスが見つかるまで時刻表を読み込む
+    while True:
+        if hour_tt is not None:
+            for bus in hour_tt:
+                if bus[0] >= minute:
+                    bus_type = bus[2]
+                    if not in_vacation and bus_type == 2:
+                        # 通常日かつ学休日のみ運行バスのとき
+                        continue
+                    if in_vacation and (bus_type == 1 or bus_type == 3):
+                        # 学休日かつ運休のバスの時
+                        continue
+
+                    re_list.append((year, month, day, hour, bus))
+                    if len(re_list) >= counts:
+                        return re_list
+
+        # 時刻，日付の更新
+        minute = 0
+        if hour < 23:
+            hour += 1
+        else:
+            day += 1
+            hour = 0
+
+            if not validate_date(year, month, day):
+                if month < 12:
+                    month += 1
+                    day = 1
+                else:
+                    year += 1
+                    month = day = 1
+
+            in_vacation = date_is_in_vacation(year, month, day)
+            daytype = get_day_type(year, month, day)
+            day_tt = get_element(to_tt, daytype)
+
+        hour_tt = get_element(day_tt, str(hour))
+
+
 def get_day_type(year, month, day):
     if not validate_date(year, month, day):
         return None
