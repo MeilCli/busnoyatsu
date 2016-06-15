@@ -222,6 +222,8 @@ def validate_date(year, month, day):
 def get_current_time():
     return map(int, datetime.now(tz=JST()).strftime("%Y %-m %-d %H %M").split(" "))
 
+def formate_datetime_as_array(dt):
+    return map(int, dt.strftime("%Y %-m %-d %H %M").split(" "))
 
 @app.route('/')
 def index():
