@@ -315,7 +315,9 @@ def api_get_next_bus_for_post_request():
 
         if not 'from' in query or not 'to' in query:
             err_msg = '"from" or "to" parameters does not exist.'
-            return jsonify({'Error': err_msg}), 400
+            next_bus = {'Error': err_msg}
+            next_bus_results["results"].append(next_bus)
+            continue
 
         origin, destination = ["", ""]
         if query['from'] == 'kutc' or query['from'] == 'takatsuki' or query['from'] == 'tonda':
@@ -325,7 +327,9 @@ def api_get_next_bus_for_post_request():
 
         if origin == "" or destination == "":
             err_msg = '"from" or "to" parameters may be invalid. Should be in "kutc" or "takatsuki", "tonda".'
-            return jsonify({'Error': err_msg}), 400
+            next_bus = {'Error': err_msg}
+            next_bus_results["results"].append(next_bus)
+            continue
 
         after_days, after_hours, after_minutes = [0, 0, 0]
         if 'days' in query:
@@ -356,18 +360,22 @@ def api_get_next_bus_for_post_request():
         formatted_time = format_datetime_as_array(dt)
 
         next_bus = get_next_bus(time_table, origin, destination, *formatted_time)
-
-        next_bus = {
-                'From'       : origin,
-                'To'         : destination,
-                'Year'       : next_bus[0],
-                'Month'      : next_bus[1],
-                'Day'        : next_bus[2],
-                'Hour'       : next_bus[3],
-                'Minute'     : next_bus[4][0],
-                'Destination': next_bus[4][1],
-                'Stat'       : next_bus[4][2]
-                }
+        if next_bus is None:
+            err_msg = 'Cannot fetch time information of next bus.'
+            next_bus = {'Error': err_msg}
+        else:
+            next_bus = {
+                    'From'       : origin,
+                    'To'         : destination,
+                    'Year'       : next_bus[0],
+                    'Month'      : next_bus[1],
+                    'Day'        : next_bus[2],
+                    'Hour'       : next_bus[3],
+                    'Minute'     : next_bus[4][0],
+                    'Destination': next_bus[4][1],
+                    'Stat'       : next_bus[4][2],
+                    'Error'      : None
+                    }
 
         next_bus_results["results"].append(next_bus)
 
