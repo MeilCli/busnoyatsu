@@ -43,19 +43,26 @@ def get_element(time_table, key):
 
 def get_next_bus(time_table, from_, to, year, month, day, hour, minute):
     re_list = []
+
     from_tt = get_element(time_table, from_)
+    if from_tt is None:
+        return None
     to_tt = get_element(from_tt, to)
+    if to_tt is None:
+        return None
 
     # 日付のタイプ(week, sat, sun)を取得
     daytype = get_day_type(year, month, day)
+    if daytype == "":
+        return None
 
     # 学休期間かどうか調べる
     in_vacation = date_is_in_vacation(year, month, day)
 
-    if daytype == "":
+    day_tt = get_element(to_tt, daytype)
+    if day_tt is None:
         return None
 
-    day_tt = get_element(to_tt, daytype)
     hour_tt = get_element(day_tt, str(hour))
 
     # 次のバスが見つかるまで時刻表を読み込む
@@ -92,25 +99,34 @@ def get_next_bus(time_table, from_, to, year, month, day, hour, minute):
             in_vacation = date_is_in_vacation(year, month, day)
             daytype = get_day_type(year, month, day)
             day_tt = get_element(to_tt, daytype)
+            if day_tt is None:
+                return None
 
         hour_tt = get_element(day_tt, str(hour))
 
 
 def get_multiple_time_info_for_next_bus(time_table, from_, to, year, month, day, hour, minute, counts=1):
     re_list = []
+
     from_tt = get_element(time_table, from_)
+    if from_tt is None:
+        return None
     to_tt = get_element(from_tt, to)
+    if to_tt is None:
+        return None
 
     # 日付のタイプ(week, sat, sun)を取得
     daytype = get_day_type(year, month, day)
+    if daytype == "":
+        return None
 
     # 学休期間かどうか調べる
     in_vacation = date_is_in_vacation(year, month, day)
 
-    if daytype == "":
+    day_tt = get_element(to_tt, daytype)
+    if day_tt is None:
         return None
 
-    day_tt = get_element(to_tt, daytype)
     hour_tt = get_element(day_tt, str(hour))
 
     # 次のバスが見つかるまで時刻表を読み込む
@@ -149,6 +165,8 @@ def get_multiple_time_info_for_next_bus(time_table, from_, to, year, month, day,
             in_vacation = date_is_in_vacation(year, month, day)
             daytype = get_day_type(year, month, day)
             day_tt = get_element(to_tt, daytype)
+            if day_tt is None:
+                return None
 
         hour_tt = get_element(day_tt, str(hour))
 
@@ -269,6 +287,8 @@ def api_get_next_bus(word):
         return jsonify({'Error': 'Mismatch your request path'}), 400
     current_time = get_current_time()
     next_bus = get_next_bus(time_table, origin, destination, current_time[0], current_time[1], current_time[2], current_time[3], current_time[4])
+    if next_bus is None:
+        return jsonify({'Error': 'Cannot fetch time information of next bus.'}), 400
 
     return jsonify({'Year': next_bus[0], 'Month': next_bus[1], 'Day': next_bus[2], 'Hour': next_bus[3], 'Minute': next_bus[4][0], 'Destination': next_bus[4][1], 'Stat': next_bus[4][2]})
 
