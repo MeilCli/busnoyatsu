@@ -309,6 +309,8 @@ def api_get_next_bus_for_post_request():
         err_msg = 'Invalid JSON format.'
         return jsonify({'Error': err_msg}), 400
 
+    next_bus_results = {"results": []}
+
     for query in req["queries"]:
 
         if not 'from' in query or not 'to' in query:
@@ -349,13 +351,27 @@ def api_get_next_bus_for_post_request():
             except:
                 pass
 
-    # Calculate the elapsed time you specify from the current time.
-    dt = datetime.now(tz=JST()) + timedelta(days=after_days, hours=after_hours, minutes=after_minutes)
-    formatted_time = formate_datetime_as_array(dt)
+        # Calculate the elapsed time you specify from the current time.
+        dt = datetime.now(tz=JST()) + timedelta(days=after_days, hours=after_hours, minutes=after_minutes)
+        formatted_time = formate_datetime_as_array(dt)
 
-    next_bus = get_next_bus(time_table, origin, destination, *formatted_time)
+        next_bus = get_next_bus(time_table, origin, destination, *formatted_time)
 
-    return jsonify({'Year': next_bus[0], 'Month': next_bus[1], 'Day': next_bus[2], 'Hour': next_bus[3], 'Minute': next_bus[4][0], 'Destination': next_bus[4][1], 'Stat': next_bus[4][2]})
+        next_bus = {
+                'From'       : origin,
+                'To'         : destination,
+                'Year'       : next_bus[0],
+                'Month'      : next_bus[1],
+                'Day'        : next_bus[2],
+                'Hour'       : next_bus[3],
+                'Minute'     : next_bus[4][0],
+                'Destination': next_bus[4][1],
+                'Stat'       : next_bus[4][2]
+                }
+
+        next_bus_results["results"].append(next_bus)
+
+    return jsonify(next_bus_results)
 
 @app.route('/robots.txt')
 def static_from_root():
