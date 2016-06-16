@@ -294,7 +294,7 @@ def api_get_next_bus(word):
 
     return jsonify({'Year': next_bus[0], 'Month': next_bus[1], 'Day': next_bus[2], 'Hour': next_bus[3], 'Minute': next_bus[4][0], 'Destination': next_bus[4][1], 'Stat': next_bus[4][2]})
 
-@app.route('/api/v1/next-bus', methods=['POST'])
+@app.route('/api/v1/next-bus/', methods=['POST'])
 def api_get_next_bus_for_post_request():
     if request.headers['Content-Type'] != 'application/json':
         err_msg = 'Invalid Content-Type field of HTTP request header. Should be in "application/json".'
