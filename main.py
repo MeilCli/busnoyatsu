@@ -222,7 +222,7 @@ def validate_date(year, month, day):
 def get_current_time():
     return map(int, datetime.now(tz=JST()).strftime("%Y %-m %-d %H %M").split(" "))
 
-def formate_datetime_as_array(dt):
+def format_datetime_as_array(dt):
     return map(int, dt.strftime("%Y %-m %-d %H %M").split(" "))
 
 @app.route('/')
@@ -353,7 +353,7 @@ def api_get_next_bus_for_post_request():
 
         # Calculate the elapsed time you specify from the current time.
         dt = datetime.now(tz=JST()) + timedelta(days=after_days, hours=after_hours, minutes=after_minutes)
-        formatted_time = formate_datetime_as_array(dt)
+        formatted_time = format_datetime_as_array(dt)
 
         next_bus = get_next_bus(time_table, origin, destination, *formatted_time)
 
