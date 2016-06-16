@@ -305,42 +305,49 @@ def api_get_next_bus_for_post_request():
         err_msg = 'Cannot parse the request as JSON format.'
         return jsonify({'Error': err_msg}), 400
 
-    if not 'from' in req and not 'to' in req:
-        err_msg = '"from" or "to" parameters does not exist.'
+    if not req["queries"]:
+        err_msg = 'Invalid JSON format.'
         return jsonify({'Error': err_msg}), 400
 
-    origin, destination = ["", ""]
-    if req['from'] == 'kutc' or req['from'] == 'takatsuki' or req['from'] == 'tonda':
-        origin = req["from"]
-    if req['to'] == 'kutc' or req['to'] == 'takatsuki' or req['to'] == 'tonda':
-        destination = req["to"]
-    if origin == "" or destination == "":
-        err_msg = '"from" or "to" parameters may be invalid. Should be in "kutc" or "takatsuki", "tonda".'
-        return jsonify({'Error': err_msg}), 400
+    for query in req["queries"]:
 
-    after_days, after_hours, after_minutes = [0, 0, 0]
-    if 'days' in req:
-        try:
-            after_days = int(req['days'])
-        except:
-            pass
-    if 'hours' in req:
-        try:
-            after_hours = int(req['hours'])
-        except:
-            pass
-    if 'minutes' in req:
-        try:
-            after_minutes = int(req['minutes'])
-        except:
-            pass
+        if not 'from' in query or not 'to' in query:
+            err_msg = '"from" or "to" parameters does not exist.'
+            return jsonify({'Error': err_msg}), 400
 
-    counts = 0
-    if 'counts' in req:
-        try:
-            counts = int(req['counts'])
-        except:
-            pass
+        origin, destination = ["", ""]
+        if query['from'] == 'kutc' or query['from'] == 'takatsuki' or query['from'] == 'tonda':
+            origin      = query["from"]
+        if query['to'] == 'kutc' or query['to'] == 'takatsuki' or query['to'] == 'tonda':
+            destination = query["to"]
+
+        if origin == "" or destination == "":
+            err_msg = '"from" or "to" parameters may be invalid. Should be in "kutc" or "takatsuki", "tonda".'
+            return jsonify({'Error': err_msg}), 400
+
+        after_days, after_hours, after_minutes = [0, 0, 0]
+        if 'days' in query:
+            try:
+                after_days = int(query['days'])
+            except:
+                pass
+        if 'hours' in query:
+            try:
+                after_hours = int(query['hours'])
+            except:
+                pass
+        if 'minutes' in query:
+            try:
+                after_minutes = int(query['minutes'])
+            except:
+                pass
+
+        counts = 0
+        if 'counts' in query:
+            try:
+                counts = int(query['counts'])
+            except:
+                pass
 
     # Calculate the elapsed time you specify from the current time.
     dt = datetime.now(tz=JST()) + timedelta(days=after_days, hours=after_hours, minutes=after_minutes)
