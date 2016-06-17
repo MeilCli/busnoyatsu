@@ -36,7 +36,7 @@ def get_element(time_table, key):
         pass
 
 
-def get_next_bus(time_table, from_, to, year, month, day, hour, minute):
+def get_next_bus(from_, to, year, month, day, hour, minute):
     re_list = []
 
     from_tt = get_element(time_table, from_)
@@ -100,7 +100,7 @@ def get_next_bus(time_table, from_, to, year, month, day, hour, minute):
         hour_tt = get_element(day_tt, str(hour))
 
 
-def get_multiple_time_info_for_next_bus(time_table, from_, to, year, month, day, hour, minute, counts=1):
+def get_multiple_time_info_for_next_bus(from_, to, year, month, day, hour, minute, counts=1):
     re_list = []
 
     from_tt = get_element(time_table, from_)
