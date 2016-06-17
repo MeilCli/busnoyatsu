@@ -214,8 +214,5 @@ def validate_date(year, month, day):
         return False
 
 
-def get_current_time():
-    return map(int, datetime.now(tz=JST()).strftime("%Y %-m %-d %H %M").split(" "))
-
 def format_datetime_as_array(dt):
     return map(int, dt.strftime("%Y %-m %-d %H %M").split(" "))

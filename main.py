@@ -57,6 +57,7 @@ def next_bus(word):
 def api_get_next_bus(word):
     origin = ''
     destination = ''
+
     if word == 'to-takatsuki':
         origin = 'kutc'
         destination = 'takatsuki'
@@ -71,8 +72,11 @@ def api_get_next_bus(word):
         destination = 'kutc'
     else:
         return jsonify({'Error': 'Mismatch your request path'}), 400
-    current_time = util.get_current_time()
-    next_bus = util.get_next_bus(time_table, origin, destination, current_time[0], current_time[1], current_time[2], current_time[3], current_time[4])
+
+    current_time = datetime.now(tz=util.JST())
+    formatted_time = util.format_datetime_as_array(current_time)
+    next_bus = util.get_next_bus(time_table, origin, destination, *formatted_time)
+
     if next_bus is None:
         return jsonify({'Error': 'Cannot fetch time information of next bus.'}), 400
 
