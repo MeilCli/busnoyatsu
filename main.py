@@ -329,6 +329,12 @@ def api_get_next_bus_for_post_request():
         if query['to'] == 'kutc' or query['to'] == 'takatsuki' or query['to'] == 'tonda':
             destination = query["to"]
 
+        if origin == destination:
+            err_msg = '"from" and "to" parameters are same. These parameters should be different.'
+            next_bus = {'Error': err_msg}
+            next_bus_results["results"].append(next_bus)
+            continue
+
         if origin == "" or destination == "":
             err_msg = '"from" or "to" parameters may be invalid. Should be in "kutc" or "takatsuki", "tonda".'
             next_bus = {'Error': err_msg}
