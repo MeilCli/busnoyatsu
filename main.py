@@ -366,25 +366,39 @@ def api_get_next_bus_for_post_request():
         dt = datetime.now(tz=JST()) + timedelta(days=after_days, hours=after_hours, minutes=after_minutes)
         formatted_time = format_datetime_as_array(dt)
 
-        next_bus = get_next_bus(time_table, origin, destination, *formatted_time)
+        next_bus = get_multiple_time_info_for_next_bus(time_table, origin, destination, *formatted_time, counts=counts)
+
+        next_bus_result = {}
         if next_bus is None:
             err_msg = 'Cannot fetch time information of next bus.'
-            next_bus = {'Error': err_msg}
+            next_bus_result = {
+                    'Counts': 0,
+                    'From'  : "",
+                    'To'    : "",
+                    'Buses' : [],
+                    'Error' : err_msg,
+                    }
         else:
-            next_bus = {
-                    'From'       : origin,
-                    'To'         : destination,
-                    'Year'       : next_bus[0],
-                    'Month'      : next_bus[1],
-                    'Day'        : next_bus[2],
-                    'Hour'       : next_bus[3],
-                    'Minute'     : next_bus[4][0],
-                    'Destination': next_bus[4][1],
-                    'Stat'       : next_bus[4][2],
-                    'Error'      : None
+            next_bus_result = {
+                    'Counts': len(next_bus),
+                    'From'  : origin,
+                    'To'    : destination,
+                    'Buses' : [],
+                    'Error' : None,
                     }
 
-        next_bus_results["results"].append(next_bus)
+            for nb in next_bus:
+                next_bus_result["Buses"].append({
+                    'Year'       : nb[0],
+                    'Month'      : nb[1],
+                    'Day'        : nb[2],
+                    'Hour'       : nb[3],
+                    'Minute'     : nb[4][0],
+                    'Destination': nb[4][1],
+                    'Stat'       : nb[4][2],
+                    })
+
+        next_bus_results["results"].append(next_bus_result)
 
     return jsonify(next_bus_results)
 
