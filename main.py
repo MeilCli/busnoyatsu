@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 import util
 import json
-from datetime import date, datetime, timedelta, tzinfo
+from datetime import datetime, timedelta
 
 kutc_tt = open("timetable/kutc.json")
 takatsuki_tt = open("timetable/takatsuki.json")
@@ -35,33 +35,22 @@ def from_kutc():
     return render_template("from-kutc.html")
 
 
-@app.route('/to-takatsuki')
-def to_takatsuki():
-    current_time = util.get_current_time()
-    next_bus = util.get_next_bus(time_table, "kutc", "takatsuki", current_time[0], current_time[1], current_time[2], current_time[3], current_time[4])
-    return render_template("to-takatsuki.html",  year = next_bus[0], month = next_bus[1], day = next_bus[2], hour = next_bus[3], minute = next_bus[4][0], dest = next_bus[4][1], stat = next_bus[4][2])
+@app.route('/next-bus/<string:word>')
+def next_bus(word):
+    current_time = datetime.now(tz=util.JST())
+    formatted_time = util.format_datetime_as_array(current_time)
+    orig_dest = word.split("-")
+    html = word + ".html"
 
+    if orig_dest[0] == "to":
+        origin = "kutc"
+        destination = orig_dest[1]
+    elif orig_dest[0] == "from":
+        origin = orig_dest[1]
+        destination = "kutc"
 
-@app.route('/to-tonda')
-def to_tonda():
-    current_time = util.get_current_time()
-    next_bus = util.get_next_bus(time_table, "kutc", "tonda", current_time[0], current_time[1], current_time[2], current_time[3], current_time[4])
-    return render_template("to-tonda.html", year = next_bus[0], month = next_bus[1], day = next_bus[2], hour = next_bus[3], minute = next_bus[4][0], dest = next_bus[4][1], stat = next_bus[4][2])
-
-
-@app.route('/from-takatsuki')
-def from_takatsuki():
-    current_time = util.get_current_time()
-    next_bus = util.get_next_bus(time_table, "takatsuki", "kutc", current_time[0], current_time[1], current_time[2], current_time[3], current_time[4])
-    return render_template("from-takatsuki.html", year = next_bus[0], month = next_bus[1], day = next_bus[2], hour = next_bus[3], minute = next_bus[4][0], dest = next_bus[4][1], stat = next_bus[4][2])
-
-
-@app.route('/from-tonda')
-def from_tonda():
-    current_time = util.get_current_time()
-    next_bus = util.get_next_bus(time_table, "tonda", "kutc", current_time[0], current_time[1], current_time[2], current_time[3], current_time[4])
-
-    return render_template("from-tonda.html", year = next_bus[0], month = next_bus[1], day = next_bus[2], hour = next_bus[3], minute = next_bus[4][0], dest = next_bus[4][1], stat = next_bus[4][2])
+    next_bus = util.get_next_bus(time_table, origin, destination, *formatted_time)
+    return render_template(html, year = next_bus[0], month = next_bus[1], day = next_bus[2], hour = next_bus[3], minute = next_bus[4][0], dest = next_bus[4][1], stat = next_bus[4][2])
 
 
 @app.route('/api/v1/next-bus/<string:word>', methods=['GET'])
