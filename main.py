@@ -296,6 +296,10 @@ def api_get_next_bus(word):
 
 @app.route('/api/v1/next-bus/', methods=['POST'])
 def api_get_next_bus_for_post_request():
+    if 'CONTENT_TYPE' not in request.headers:
+        err_msg = '"Content-Type" field in HTTP request header does not exist. Should set "application/json".'
+        return jsonify({'Error': err_msg}), 400
+
     if request.headers['Content-Type'] != 'application/json':
         err_msg = 'Invalid Content-Type field of HTTP request header. Should be in "application/json".'
         return jsonify({'Error': err_msg}), 400
