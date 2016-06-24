@@ -41,7 +41,7 @@ def next_bus(word):
         origin = orig_dest[1]
         destination = "kutc"
 
-    next_bus = util.get_multiple_time_info_for_next_bus(origin, destination, *formatted_time, counts = counts)
+    next_bus = util.get_next_bus(origin, destination, *formatted_time, counts = counts)
     return render_template(html, hour_1 = next_bus[0][3], minute_1 = next_bus[0][4][0], hour_2 = next_bus[1][3], minute_2 = next_bus[1][4][0], hour_3 = next_bus[2][3], minute_3 = next_bus[2][4][0])
 
 
@@ -72,7 +72,7 @@ def api_get_next_bus(word):
     if next_bus is None:
         return jsonify({'Error': 'Cannot fetch time information of next bus.'}), 400
 
-    return jsonify({'Year': next_bus[0], 'Month': next_bus[1], 'Day': next_bus[2], 'Hour': next_bus[3], 'Minute': next_bus[4][0], 'Destination': next_bus[4][1], 'Stat': next_bus[4][2]})
+    return jsonify({'Year': next_bus[0][0], 'Month': next_bus[0][1], 'Day': next_bus[0][2], 'Hour': next_bus[0][3], 'Minute': next_bus[0][4][0], 'Destination': next_bus[0][4][1], 'Stat': next_bus[0][4][2]})
 
 
 @app.route('/api/v1/next-bus/', methods=['POST'])
@@ -147,7 +147,7 @@ def api_get_next_bus_for_post_request():
         dt = datetime.now(tz=util.JST()) + timedelta(days=after_days, hours=after_hours, minutes=after_minutes)
         formatted_time = util.format_datetime_as_array(dt)
 
-        next_bus = util.get_multiple_time_info_for_next_bus(origin, destination, *formatted_time, counts=counts)
+        next_bus = util.get_next_bus(origin, destination, *formatted_time, counts=counts)
 
         next_bus_result = {}
         if next_bus is None:
