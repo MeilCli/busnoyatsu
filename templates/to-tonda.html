@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
   <div class="str">関西大学発 JR富田駅行きの次のバスは</div>
-  <div class="str">{{ hour }}時{{ minute }}分発車です</div>
+  <div class="str">先発:{{ hour_1 }}時{{ minute_1 }}分発車です</div>
+  <div class="str">次発:{{ hour_2 }}時{{ minute_2 }}分発車です</div>
+  <div class="str">次々発:{{ hour_3 }}時{{ minute_3 }}分発車です</div>
 {% endblock %}

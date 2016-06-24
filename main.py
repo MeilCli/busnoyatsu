@@ -32,6 +32,7 @@ def next_bus(word):
     formatted_time = util.format_datetime_as_array(current_time)
     orig_dest = word.split("-")
     html = word + ".html"
+    counts = 3
 
     if orig_dest[0] == "to":
         origin = "kutc"
@@ -40,8 +41,8 @@ def next_bus(word):
         origin = orig_dest[1]
         destination = "kutc"
 
-    next_bus = util.get_next_bus(origin, destination, *formatted_time)
-    return render_template(html, year = next_bus[0], month = next_bus[1], day = next_bus[2], hour = next_bus[3], minute = next_bus[4][0], dest = next_bus[4][1], stat = next_bus[4][2])
+    next_bus = util.get_multiple_time_info_for_next_bus(origin, destination, *formatted_time, counts = counts)
+    return render_template(html, hour_1 = next_bus[0][3], minute_1 = next_bus[0][4][0], hour_2 = next_bus[1][3], minute_2 = next_bus[1][4][0], hour_3 = next_bus[2][3], minute_3 = next_bus[2][4][0])
 
 
 @app.route('/api/v1/next-bus/<string:word>', methods=['GET'])
