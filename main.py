@@ -11,22 +11,22 @@ import json
 from datetime import datetime, timedelta
 
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def index():
     return render_template("index.html")
 
 
-@app.route('/to-kutc')
+@app.route('/to-kutc', methods=['GET'])
 def to_kutc():
     return render_template("to-kutc.html")
 
 
-@app.route('/from-kutc')
+@app.route('/from-kutc', methods=['GET'])
 def from_kutc():
     return render_template("from-kutc.html")
 
 
-@app.route('/next-bus/<string:word>')
+@app.route('/next-bus/<string:word>', methods=['GET'])
 def next_bus(word):
     current_time = datetime.now(tz=util.JST())
     formatted_time = util.format_datetime_as_array(current_time)
