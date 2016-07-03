@@ -6,7 +6,7 @@ vendor.add('libs')
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
 app = Flask(__name__)
 
-import util
+import utils
 import json
 from datetime import datetime, timedelta
 
@@ -28,8 +28,8 @@ def from_kutc():
 
 @app.route('/next-bus/<string:word>', methods=['GET'])
 def next_bus(word):
-    current_time = datetime.now(tz=util.JST())
-    formatted_time = util.format_datetime_as_array(current_time)
+    current_time = datetime.now(tz=utils.JST())
+    formatted_time = utils.format_datetime_as_array(current_time)
     orig_dest = word.split("-")
     html = word + ".html"
     counts = 3
@@ -41,7 +41,7 @@ def next_bus(word):
         origin = orig_dest[1]
         destination = "kutc"
 
-    next_bus = util.get_next_bus(origin, destination, *formatted_time, counts = counts)
+    next_bus = utils.get_next_bus(origin, destination, *formatted_time, counts = counts)
     return render_template(html, hour_1 = next_bus[0][3], minute_1 = next_bus[0][4][0], hour_2 = next_bus[1][3], minute_2 = next_bus[1][4][0], hour_3 = next_bus[2][3], minute_3 = next_bus[2][4][0])
 
 
@@ -65,9 +65,9 @@ def api_get_next_bus(word):
     else:
         return jsonify({'Error': 'Mismatch your request path'}), 400
 
-    current_time = datetime.now(tz=util.JST())
-    formatted_time = util.format_datetime_as_array(current_time)
-    next_bus = util.get_next_bus(origin, destination, *formatted_time)
+    current_time = datetime.now(tz=utils.JST())
+    formatted_time = utils.format_datetime_as_array(current_time)
+    next_bus = utils.get_next_bus(origin, destination, *formatted_time)
 
     if next_bus is None:
         return jsonify({'Error': 'Cannot fetch time information of next bus.'}), 400
@@ -144,10 +144,10 @@ def api_get_next_bus_for_post_request():
                 pass
 
         # Calculate the elapsed time you specify from the current time.
-        dt = datetime.now(tz=util.JST()) + timedelta(days=after_days, hours=after_hours, minutes=after_minutes)
-        formatted_time = util.format_datetime_as_array(dt)
+        dt = datetime.now(tz=utils.JST()) + timedelta(days=after_days, hours=after_hours, minutes=after_minutes)
+        formatted_time = utils.format_datetime_as_array(dt)
 
-        next_bus = util.get_next_bus(origin, destination, *formatted_time, counts=counts)
+        next_bus = utils.get_next_bus(origin, destination, *formatted_time, counts=counts)
 
         next_bus_result = {}
         if next_bus is None:
