@@ -3,6 +3,7 @@
 
 import json
 from datetime import date, datetime, timedelta, tzinfo
+import jholiday
 
 kutc_tt = open("timetable/kutc.json")
 takatsuki_tt = open("timetable/takatsuki.json")
@@ -105,6 +106,10 @@ def get_next_bus(from_, to, year, month, day, hour, minute, counts=1):
 def get_day_type(year, month, day):
     if not validate_date(year, month, day):
         return None
+
+    # 祝日
+    if jholiday.holiday_name(year, month, day) != None:
+        return "sun"
 
     week = date(year, month, day).weekday()
     daytype = ""
